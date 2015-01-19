@@ -38,15 +38,12 @@ try:
                     else:
                         row[0] = sku[:-1]
                         temp = row[0]
-                        print(row[0])
 
                 if row[2] != "":
                     row[2] = "peuterey"
-                    print(row[2])
 
                 if row[6] != "":
                     row[6] = "world, ita, un"
-                    print(row[6])
 
                 a.writerow(row)
 
