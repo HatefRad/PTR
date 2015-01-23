@@ -76,52 +76,58 @@ for oldFile in glob.glob(oldFiles):
             header = readCSV.__next__()
             header[72] = "size"
 
-            with open('new'+oldFile[4:], 'w', newline='') as fp:
-                a = csv.writer(fp, delimiter=',')
-                a.writerow(header)
+            try:
+                with open('new'+oldFile[4:], 'w', newline='') as fp:
+                    a = csv.writer(fp, delimiter=',')
+                    a.writerow(header)
 
-                temp = ""
-                for row in readCSV:
-                    signal = False
-                    sku = row[0]
+                    temp = ""
+                    for row in readCSV:
+                        signal = False
+                        sku = row[0]
 
-                    if row[2] != "":
-                        row[2] = "peuterey"
+                        if row[2] != "":
+                            row[2] = "peuterey"
 
-                    if row[6] != "":
-                        row[6] = "usa"
+                        if row[6] != "":
+                            row[6] = "usa"
 
-                    if "configurable" in oldFile:
-                        if sku[:3] in ("PKB", "PKK"):
-                            if sku[:-1] == temp:
-                                for i in range(0,64):
-                                    row[i] = ""
+                        if "configurable" in oldFile:
+                            if sku[:3] in ("PKB", "PKK"):
+                                if sku[:-1] == temp:
+                                    for i in range(0,64):
+                                        row[i] = ""
 
-                            else:
-                                row[0] = sku[:-1]
-                                temp = row[0]
+                                else:
+                                    row[0] = sku[:-1]
+                                    temp = row[0]
 
-                        if row[4] != "":
-                            row[4] = new_category(row[4], row[40])
+                            if row[4] != "":
+                                row[4] = new_category(row[4], row[40])
 
-                        if row[65] == "":
-                            signal = True
+                            if row[65] == "":
+                                signal = True
 
-                        if row[66] == "taglia":
-                            row[66] = "size"
+                            if row[66] == "taglia":
+                                row[66] = "size"
 
-                    if signal == False:
-                        a.writerow(row)
+                        if signal == False:
+                            a.writerow(row)
 
-            print("File "+oldFile[4:]+" is processed.")
-            fp.close()
+                print("File "+oldFile[4:]+" is processed.")
+                fp.close()
 
-            logging.basicConfig(filename='Success.log', level=logging.DEBUG)
-            logging.debug('File conversion was successful')
+            except IOError:
+                print("\nSomething went wrong while writing the new file")
+                logging.basicConfig(filename='Error.log', level=logging.DEBUG)
+                logging.debug('Something went wrong while writing the new file!')
+
+        logging.basicConfig(filename='Success.log', level=logging.DEBUG)
+        logging.debug('File: new'+oldFile[4:]+' was created')
         csvFile.close()
 
-    except:
-        print("\nSomething went wrong!")
+    except IOError:
+        print("\nSomething big went wrong!")
         time.sleep(10)
         logging.basicConfig(filename='Error.log', level=logging.DEBUG)
-        logging.debug('Something went wrong!')
+        logging.debug('Something big went wrong!')
